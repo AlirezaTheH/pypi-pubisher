@@ -1,0 +1,5 @@
+packaging
+requests
+typer
+build
+twine

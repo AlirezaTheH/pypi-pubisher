@@ -1,0 +1,58 @@
+name: PyPI Publisher
+description: Automate build and publish PEP 518 compliant projects (Setuptools,
+  Flit, Poetry) on PyPI when local version is higher than PyPI's.
+author: Alireza Hosseini
+branding:
+  icon: upload-cloud
+  color: green
+
+inputs:
+  test-pypi-api-token:
+    description: API token of the Test PyPI account publishing the project.
+      If missing, publish on Test PyPI is skipped.
+    required: false
+
+  pypi-api-token:
+    description: API token of the PyPI account publishing the project.
+    required: true
+
+  package-name:
+    description: Name of the PyPI package.
+    required: false
+    default: ${{ github.event.repository.name }}
+
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      run: python3 -m pip install -r ${{ github.action_path }}/requirements/main.txt
+
+    - name: Get PyPI info
+      id: pypi-info
+      run: |
+        python3 ${{github.action_path}}/script/pypi-info.py ${{ inputs.package-name }}"
+
+    - run: |
+        echo should-publish=${{ steps.pypi-info.outputs.should-release }}
+        echo should-publish-test=${{ steps.pypi-info.outputs.should-publish-test }}
+
+    - name: Build package
+      run: |
+        python3 -m build
+        twine check dist/*
+
+    - name: Publish on Test PyPI
+      if: |
+        inputs.test-pypi-token
+        && steps.pypi-info.outputs.should-publish-test == true
+      run: twine upload --repository testpypi dist/*
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ inputs.test-pypi-token }}
+
+    - name: Publish on PyPI
+      if: steps.pypi-info.outputs.should-publish == true
+      run: twine upload dist/*
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ inputs.pypi-token }}
