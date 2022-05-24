@@ -33,4 +33,4 @@ The action assume:
 
 ## Acknowledgements
 This action is inspired by
-[pypi-build-publish](https://github.com/etils-actions/pypi-build-publish)
+[pypi-auto-publish](https://github.com/etils-actions/pypi-auto-publish)
