@@ -1,5 +1,5 @@
 import importlib.metadata
-from typing import List, Union
+from typing import Union
 
 import requests
 import typer
@@ -17,40 +17,32 @@ def set_output(name: str, value: Union[str, bool]) -> None:
     """
     Sets GitHub action output.
     """
-    print(f'::set-output name={name}::{_normalize_value(value)}')
+    typer.echo(f'::set-output name={name}::{_normalize_value(value)}')
 
 
-def get_local_version(package_name: str) -> str:
+def get_local_version(package_name: str) -> Version:
     """
     Gets the local version.
     """
-    return importlib.metadata.version(package_name)
+    return Version(importlib.metadata.version(package_name))
 
 
-def _get_pypi_versions(package_name: str, test_pypi: bool) -> List[str]:
+def get_pypi_version(package_name: str, test_pypi: bool = False) -> Version:
+    """
+    Gets the latest PyPI version.
+    """
     test = 'test.' if test_pypi else ''
     url = f'https://{test}pypi.org/pypi/{package_name}/json'
     r = requests.get(url)
 
     # Package don't exists (yet)
     if r.status_code == 404:
-        return []
+        return Version('0.0.0')
 
     versions = list(r.json()['releases'])
     versions.sort(key=Version)
-    return versions
 
-
-def get_pypi_version(package_name: str, test_pypi: bool = False) -> str:
-    """
-    Gets the latest PyPI version.
-    """
-    all_versions = _get_pypi_versions(package_name, test_pypi)
-    if all_versions:
-        return all_versions[-1]
-    # No PyPI release yet
-    else:
-        return '0.0.0'
+    return Version(versions[-1])
 
 
 def main(package_name: str) -> None:
@@ -60,17 +52,14 @@ def main(package_name: str) -> None:
     Outputs:
     -------
     should-release: bool
-        Whether local_version > pypi_version ("true" or "false")
+        Whether local_version > pypi_version ('true' or 'false')
 
     should-publish-test: bool
-        Whether local_version > test_pypi_version ("true" or "false")
+        Whether local_version > test_pypi_version ('true' or 'false')
     """
     local_version = get_local_version(package_name)
-    pypi_version = Version(get_pypi_version(package_name))
-    test_pypi_version = Version(get_pypi_version(package_name, test_pypi=True))
-    set_output('version', local_version)
-
-    local_version = Version(local_version)
+    pypi_version = get_pypi_version(package_name)
+    test_pypi_version = get_pypi_version(package_name, test_pypi=True)
     set_output('should-publish', local_version > pypi_version)
     set_output('should-publish-test', local_version > test_pypi_version)
 
