@@ -1,6 +1,7 @@
 name: PyPI Publish
-description: Automate build and publish PEP 518 compliant projects on Test PyPI
-  and/or PyPI if `package.__version__` is ahead of PyPI's.
+description: >
+  Automate build and publish PEP 518 compliant projects on Test PyPI and/or
+  PyPI if `package.__version__` is ahead of PyPI's.
 author: Alireza Hosseini
 branding:
   icon: upload-cloud
@@ -8,13 +9,15 @@ branding:
 
 inputs:
   test-pypi-api-token:
-    description: API token of the Test PyPI account publishing the project.
-      If missing, publish on Test PyPI is skipped.
+    description: >
+      API token of the Test PyPI account publishing the project. If missing,
+      publish on Test PyPI is skipped.
     required: false
 
   pypi-api-token:
-    description: API token of the PyPI account publishing the project. If
-      missing, publish on PyPI is skipped.
+    description: >
+      API token of the PyPI account publishing the project. If missing, publish
+      on PyPI is skipped.
     required: false
 
   package-name:
@@ -26,19 +29,23 @@ runs:
   using: composite
   steps:
     - name: Install dependencies
-      run: python3 -m pip install -r ${{ github.action_path }}/requirements/main.txt
+      run: >
+        python3 -m pip install
+        -r ${{ github.action_path }}/requirements/main.txt
 
     - name: Install local package
     - run: python3 -m pip install .
 
     - name: Get PyPI info
       id: pypi-info
-      run: |
-        python3 ${{ github.action_path }}/scripts/pypi-info.py ${{ inputs.package-name }}"
+      run: >
+        python3 ${{ github.action_path }}/scripts/pypi-info.py
+        ${{ inputs.package-name }}"
 
     - run: |
         echo should-publish=${{ steps.pypi-info.outputs.should-release }}
-        echo should-publish-test=${{ steps.pypi-info.outputs.should-publish-test }}
+        echo should-publish-test=\
+        ${{ steps.pypi-info.outputs.should-publish-test }}
 
     - name: Build package
       run: |
@@ -46,7 +53,7 @@ runs:
         twine check dist/*
 
     - name: Publish on Test PyPI
-      if: |
+      if: >
         inputs.test-pypi-token
         && steps.pypi-info.outputs.should-publish-test == true
       run: twine upload --repository testpypi dist/*
@@ -55,7 +62,7 @@ runs:
         TWINE_PASSWORD: ${{ inputs.test-pypi-token }}
 
     - name: Publish on PyPI
-      if: steps.pypi-info.outputs.should-publish == true
+      if: inputs.pypi-tokens && teps.pypi-info.outputs.should-publish == true
       run: twine upload dist/*
       env:
         TWINE_USERNAME: __token__
