@@ -1,6 +1,6 @@
-name: PyPI Publisher
-description: Automate build and publish PEP 518 compliant projects (Setuptools,
-  Flit, Poetry) on PyPI.
+name: PyPI Publish
+description: Automate build and publish PEP 518 compliant projects on Test PyPI
+  and/or PyPI if `package.__version__` is ahead of PyPI's.
 author: Alireza Hosseini
 branding:
   icon: upload-cloud
@@ -13,8 +13,9 @@ inputs:
     required: false
 
   pypi-api-token:
-    description: API token of the PyPI account publishing the project.
-    required: true
+    description: API token of the PyPI account publishing the project. If
+      missing, publish on PyPI is skipped.
+    required: false
 
   package-name:
     description: Name of the PyPI package.
@@ -27,10 +28,13 @@ runs:
     - name: Install dependencies
       run: python3 -m pip install -r ${{ github.action_path }}/requirements/main.txt
 
+    - name: Install local package
+    - run: python3 -m pip install .
+
     - name: Get PyPI info
       id: pypi-info
       run: |
-        python3 ${{github.action_path}}/script/pypi-info.py ${{ inputs.package-name }}"
+        python3 ${{ github.action_path }}/scripts/pypi-info.py ${{ inputs.package-name }}"
 
     - run: |
         echo should-publish=${{ steps.pypi-info.outputs.should-release }}
@@ -38,7 +42,7 @@ runs:
 
     - name: Build package
       run: |
-        python3 -m build
+        python -m build --no-isolation
         twine check dist/*
 
     - name: Publish on Test PyPI
