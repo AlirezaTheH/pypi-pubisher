@@ -1,4 +1,4 @@
-# PyPI Publisher
+# PyPI Publish
 GitHub action to automate build and publish
 [PEP 518](https://peps.python.org/pep-0518/) compliant projects (Setuptools,
 Flit, Poetry) on Test PyPI
