@@ -47,7 +47,7 @@ def get_pypi_version(package_name: str, test_pypi: bool = False) -> Version:
 
 def main(package_name: str) -> None:
     """
-    Main command
+    Main script function
 
     Outputs:
     -------

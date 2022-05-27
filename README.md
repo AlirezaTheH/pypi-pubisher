@@ -30,9 +30,9 @@ The action assume:
 
 ## Inputs
 - `test-api-pypi-token`: API token of the Test PyPI account publishing the
-  project. If missing, publish on Test PyPI is skipped. (optional)
-- `pypi-api-token`: API token of the PyPI account publishing the project.
-  (required)
+  project. If missing, publish on Test PyPI is skipped (optional).
+- `pypi-api-token`: API token of the PyPI account publishing the project
+  (required).
 - `package-name`: Name of the PyPI package, Defaults to repository name
   (optional).
 
