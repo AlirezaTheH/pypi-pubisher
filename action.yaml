@@ -43,7 +43,7 @@ runs:
         ${{ inputs.package-name }}"
 
     - run: |
-        echo should-publish=${{ steps.pypi-info.outputs.should-release }}
+        echo should-publish=${{ steps.pypi-info.outputs.should-publish }}
         echo should-publish-test=\
         ${{ steps.pypi-info.outputs.should-publish-test }}
 
@@ -54,7 +54,7 @@ runs:
 
     - name: Publish on Test PyPI
       if: >
-        inputs.test-pypi-token
+        inputs.test-pypi-api-token
         && steps.pypi-info.outputs.should-publish-test == true
       run: twine upload --repository testpypi dist/*
       env:
@@ -62,7 +62,9 @@ runs:
         TWINE_PASSWORD: ${{ inputs.test-pypi-token }}
 
     - name: Publish on PyPI
-      if: inputs.pypi-tokens && teps.pypi-info.outputs.should-publish == true
+      if: >
+        inputs.pypi-api-token
+        && steps.pypi-info.outputs.should-publish == true
       run: twine upload dist/*
       env:
         TWINE_USERNAME: __token__
