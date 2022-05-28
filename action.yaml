@@ -35,7 +35,9 @@ runs:
       shell: bash
 
     - name: Install local package
-    - run: python3 -m pip install .
+      run: python3 -m pip install .
+      shell: bash
+
 
     - name: Get PyPI info
       id: pypi-info
