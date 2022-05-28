@@ -2,4 +2,5 @@ packaging
 requests
 typer
 build
+wheel
 twine
