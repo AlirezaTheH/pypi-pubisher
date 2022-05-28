@@ -32,6 +32,7 @@ runs:
       run: >
         python3 -m pip install
         -r ${{ github.action_path }}/requirements/main.txt
+      shell: bash
 
     - name: Install local package
     - run: python3 -m pip install .
@@ -41,22 +42,26 @@ runs:
       run: >
         python3 ${{ github.action_path }}/scripts/pypi-info.py
         ${{ inputs.package-name }}"
+      shell: bash
 
     - run: |
         echo should-publish=${{ steps.pypi-info.outputs.should-publish }}
         echo should-publish-test=\
         ${{ steps.pypi-info.outputs.should-publish-test }}
+      shell: bash
 
     - name: Build package
       run: |
         python -m build --no-isolation
         twine check dist/*
+      shell: bash
 
     - name: Publish on Test PyPI
       if: >
         inputs.test-pypi-api-token
         && steps.pypi-info.outputs.should-publish-test == true
       run: twine upload --repository testpypi dist/*
+      shell: bash
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ inputs.test-pypi-token }}
@@ -66,6 +71,7 @@ runs:
         inputs.pypi-api-token
         && steps.pypi-info.outputs.should-publish == true
       run: twine upload dist/*
+      shell: bash
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ inputs.pypi-token }}
