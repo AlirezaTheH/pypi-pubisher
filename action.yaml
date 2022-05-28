@@ -76,7 +76,7 @@ runs:
       shell: bash
       env:
         TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ inputs.test-pypi-token }}
+        TWINE_PASSWORD: ${{ inputs.test-pypi-api-token }}
 
     - name: Publish on PyPI
       if: >
@@ -88,4 +88,4 @@ runs:
       shell: bash
       env:
         TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ inputs.pypi-token }}
+        TWINE_PASSWORD: ${{ inputs.pypi-api-token }}
