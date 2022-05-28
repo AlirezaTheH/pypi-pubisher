@@ -42,8 +42,8 @@ runs:
     - name: Get PyPI info
       id: pypi-info
       run: >
-        python3 ${{ github.action_path }}/scripts/pypi-info.py
-        ${{ inputs.package-name }}"
+        python3 ${{ github.action_path }}/scripts/pypi_info.py
+        ${{ inputs.package-name }}
       shell: bash
 
     - run: |
