@@ -53,6 +53,14 @@ runs:
       shell: bash
 
     - name: Build package
+      if: >
+        ${{ (
+        inputs.test-pypi-api-token
+        && steps.pypi-info.outputs.should-publish-test == true
+        ) || (
+        inputs.pypi-api-token
+        && steps.pypi-info.outputs.should-publish == true
+        ) }}
       run: |
         python -m build --no-isolation
         twine check dist/*
@@ -60,8 +68,10 @@ runs:
 
     - name: Publish on Test PyPI
       if: >
+        ${{
         inputs.test-pypi-api-token
         && steps.pypi-info.outputs.should-publish-test == true
+        }}
       run: twine upload --repository testpypi dist/*
       shell: bash
       env:
@@ -70,8 +80,10 @@ runs:
 
     - name: Publish on PyPI
       if: >
+        ${{
         inputs.pypi-api-token
         && steps.pypi-info.outputs.should-publish == true
+        }}
       run: twine upload dist/*
       shell: bash
       env:
