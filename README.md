@@ -1,4 +1,4 @@
-# PyPI Publish
+# PyPI Auto Publish
 GitHub action to automate build and publish
 [PEP 518](https://peps.python.org/pep-0518/) compliant projects (Setuptools,
 Flit, Poetry) on Test PyPI and/or PyPI if local `package.__version__` is ahead
@@ -17,7 +17,7 @@ jobs:
   pypi-publish:
     runs-on: ubuntu-latest
     steps:
-      - use: alirezatheh/pypi-publish@v1
+      - use: alirezatheh/pypi-auto-publish@v1
         with:
           test-api-pypi-token: ${{ secrets.TEST_PYPI_API_TOKEN }}
           pypi-api-token: ${{ secrets.PYPI_API_TOKEN }}

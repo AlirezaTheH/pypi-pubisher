@@ -1,4 +1,4 @@
-name: PyPI Publish
+name: PyPI Auto Publish
 description: >
   Automate build and publish PEP 518 compliant projects on Test PyPI and/or
   PyPI if `package.__version__` is ahead of PyPI's.
