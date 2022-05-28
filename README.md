@@ -17,7 +17,7 @@ jobs:
   pypi-publish:
     runs-on: ubuntu-latest
     steps:
-      - use: alirezatheh/pypi-auto-publish@v1
+      - uses: alirezatheh/pypi-auto-publish@v1
         with:
           test-api-pypi-token: ${{ secrets.TEST_PYPI_API_TOKEN }}
           pypi-api-token: ${{ secrets.PYPI_API_TOKEN }}
