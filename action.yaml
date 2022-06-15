@@ -46,7 +46,8 @@ runs:
         ${{ inputs.package-name }}
       shell: bash
 
-    - run: |
+    - name: Show PyPi info
+      run: |
         echo should-publish=${{ steps.pypi-info.outputs.should-publish }}
         echo should-publish-test=\
         ${{ steps.pypi-info.outputs.should-publish-test }}
